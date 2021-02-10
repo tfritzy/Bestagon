@@ -1,0 +1,5 @@
+syntax = "proto3";
+
+message PlayerJoinedGame {
+    string Username = 2;
+}

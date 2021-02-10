@@ -2,12 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Sockets;
+using Google.Protobuf.WellKnownTypes;
 
 public class TCPConnection
 {
     public TcpClient socket;
     public const int DATA_BUFFER_SIZE = 1024;
-    public byte[] ReceiveBuffer;
+    private byte[] receiveBuffer;
     public NetworkStream Stream;
     public Packet ReceivedData;
 
@@ -19,9 +20,18 @@ public class TCPConnection
             SendBufferSize = DATA_BUFFER_SIZE,
         };
 
-        ReceiveBuffer = new byte[DATA_BUFFER_SIZE];
+        receiveBuffer = new byte[DATA_BUFFER_SIZE];
 
         ReceivedData = new Packet();
+    }
+
+    public byte[] ReceiveBuffer
+    {
+        get { return receiveBuffer; }
+        set
+        {
+            Array.Copy(value, receiveBuffer, value.Length);
+        }
     }
 
     public void Connect(string ip, int port)
@@ -58,14 +68,11 @@ public class TCPConnection
 
     public void ExtractDataFromBuffer(int dataEndIndex)
     {
-        byte[] data = this.ReceiveBuffer.Take(dataEndIndex).ToArray();
-        this.ReceivedData.Append(data);
-
-        HandleData(data);
-        ReceivedData.Reset();
+        this.ReceivedData.SetContents(ReceiveBuffer, dataEndIndex);
+        HandleData(this.ReceivedData.Message);
     }
 
-    public bool HandleData(byte[] data)
+    public bool HandleData(Any message)
     {
         return true;
     }
