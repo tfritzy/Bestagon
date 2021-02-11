@@ -1,0 +1,13 @@
+Player Opens App
+Player Find Game Button
+-> PlayerLookingForGame
+<- PlayerAddedToGame
+Player's app loads specified game.
+<- PlayerJoinedGame ...
+
+<- GameStarting
+-> PlayerThrowsProjectile ...
+<- ProjectilePositions ...
+<- BlocksDestroyed ...
+<- GameOver
+<- GameSummary

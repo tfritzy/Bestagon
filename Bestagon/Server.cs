@@ -11,13 +11,17 @@ public class Server
 
     public Server(int port, int maxPlayers)
     {
-        this.MaxPlayers = maxPlayers;
+        this.MaxPlayersPerGame = maxPlayers;
         this.Port = port;
+        this.OpenGames = new LinkedList<Game>();
+        this.RunningGames = new LinkedList<Game>();
     }
 
     public int Port { get; }
-    public int MaxPlayers { get; }
+    public int MaxPlayersPerGame { get; }
     public int CurrentPlayers { get { return clients.Count; } }
+    public LinkedList<Game> OpenGames;
+    public LinkedList<Game> RunningGames;
 
     public void Start()
     {
@@ -36,7 +40,7 @@ public class Server
         tcpListener.BeginAcceptTcpClient(TCPConnectCallback, null);
         Console.WriteLine($"Incoming connection from {_client.Client.RemoteEndPoint}...");
 
-        Client client = new Client(Guid.NewGuid().ToString("N"));
+        Client client = new Client(Guid.NewGuid().ToString("N"), this);
         AddConnection(client);
 
         Console.WriteLine($"{_client.Client.RemoteEndPoint} failed to connect: Server full!");
@@ -44,7 +48,7 @@ public class Server
 
     public bool AddConnection(Client client)
     {
-        if (CurrentPlayers >= MaxPlayers)
+        if (CurrentPlayers >= MaxPlayersPerGame)
         {
             return false;
         }
@@ -52,5 +56,33 @@ public class Server
         clients.Add(client);
 
         return true;
+    }
+
+    public Game FindGame(Client client)
+    {
+        if (client.Game != null)
+        {
+            return client.Game;
+        }
+
+        if (OpenGames.Count > 0)
+        {
+            OpenGames.First.Value.Players.Add(client);
+            if (OpenGames.First.Value.IsFull())
+            {
+                Game game = OpenGames.First.Value;
+                OpenGames.RemoveFirst();
+                RunningGames.AddLast(game);
+                return game;
+            }
+
+            return OpenGames.First.Value;
+        }
+        else
+        {
+            OpenGames.AddLast(new Game(MaxPlayersPerGame));
+            OpenGames.Last.Value.Players.Add(client);
+            return OpenGames.Last.Value;
+        }
     }
 }

@@ -11,8 +11,9 @@ public class TCPConnection
     private byte[] receiveBuffer;
     public NetworkStream Stream;
     public Packet ReceivedData;
+    public Action<Any> HandleData;
 
-    public TCPConnection()
+    public TCPConnection(Action<Any> handleData)
     {
         socket = new TcpClient
         {
@@ -21,8 +22,8 @@ public class TCPConnection
         };
 
         receiveBuffer = new byte[DATA_BUFFER_SIZE];
-
         ReceivedData = new Packet();
+        HandleData = handleData;
     }
 
     public byte[] ReceiveBuffer
@@ -70,10 +71,5 @@ public class TCPConnection
     {
         this.ReceivedData.SetContents(ReceiveBuffer, dataEndIndex);
         HandleData(this.ReceivedData.Message);
-    }
-
-    public bool HandleData(Any message)
-    {
-        return true;
     }
 }

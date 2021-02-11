@@ -1,5 +1,16 @@
 syntax = "proto3";
 
 message PlayerJoinedGame {
-    string Username = 2;
+    string Username = 1;
 }
+
+message PlayerLookingForGame
+{
+    string Username = 1;
+}
+
+message PlayerAddedToGame
+{
+    string GameId = 1;
+}
+
