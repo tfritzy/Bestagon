@@ -1,16 +1,29 @@
 syntax = "proto3";
+option csharp_namespace = "Schema";
 
-message PlayerJoinedGame {
+message JoinedGame {
     string Username = 1;
 }
 
-message PlayerLookingForGame
+message LookingForGame
 {
     string Username = 1;
 }
 
-message PlayerAddedToGame
+message BoardState
 {
-    string GameId = 1;
+    repeated Hexagon Hexagons = 1;
+}
+
+message Hexagon
+{
+    int32 Id = 1;
+    Vector2 Position = 2;
+}
+
+message Vector2
+{
+    float X = 1;
+    float Y = 2;
 }
 

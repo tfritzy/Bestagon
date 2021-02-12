@@ -34,14 +34,14 @@ public class ClientTests
     public void Client_ExtractDataFromConnection()
     {
         Client client = TestObjects.BuildClient();
-        PlayerJoinedGame player = new PlayerJoinedGame() { Username = "Tyler" };
+        Schema.LookingForGame player = new Schema.LookingForGame() { Username = "Tyler" };
         byte[] bytes = Any.Pack(player).ToByteArray();
         client.TCPConnection.ReceiveBuffer = bytes;
         Assert.AreEqual(Constants.DEFAULT_BUFFER_SIZE, client.TCPConnection.ReceiveBuffer.Length);
 
         client.TCPConnection.ExtractDataFromBuffer(bytes.Length);
 
-        PlayerJoinedGame readJoinedGame = client.TCPConnection.ReceivedData.Message.Unpack<PlayerJoinedGame>();
+        Schema.LookingForGame readJoinedGame = client.TCPConnection.ReceivedData.Message.Unpack<Schema.LookingForGame>();
         Assert.AreEqual(player, readJoinedGame);
     }
 
@@ -61,7 +61,7 @@ public class ClientTests
     public void Client_HandlePlayerLookingForGame()
     {
         Client client = TestObjects.BuildClient();
-        PlayerLookingForGame playerLookingForGame = client.BuildPlayerLookingForGame();
+        Schema.LookingForGame playerLookingForGame = client.BuildLookingForGame();
         client.SendTestMessage(Any.Pack(playerLookingForGame));
 
         Assert.IsNotNull(client.Game);
@@ -82,9 +82,9 @@ public class ClientTests
         Client client2 = TestObjects.BuildClient(server);
         Client client3 = TestObjects.BuildClient(server);
 
-        client1.SendTestMessage(Any.Pack(client1.BuildPlayerLookingForGame()));
-        client2.SendTestMessage(Any.Pack(client2.BuildPlayerLookingForGame()));
-        client3.SendTestMessage(Any.Pack(client3.BuildPlayerLookingForGame()));
+        client1.SendTestMessage(Any.Pack(client1.BuildLookingForGame()));
+        client2.SendTestMessage(Any.Pack(client2.BuildLookingForGame()));
+        client3.SendTestMessage(Any.Pack(client3.BuildLookingForGame()));
 
         Assert.AreEqual(1, server.OpenGames.Count);
         Assert.AreEqual(1, server.RunningGames.Count);
@@ -92,6 +92,5 @@ public class ClientTests
         CollectionAssert.Contains(server.RunningGames.First.Value.Players, client2);
         CollectionAssert.DoesNotContain(server.RunningGames.First.Value.Players, client3);
         CollectionAssert.Contains(server.OpenGames.First.Value.Players, client3);
-
     }
 }

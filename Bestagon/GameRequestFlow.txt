@@ -4,6 +4,7 @@ Player Find Game Button
 <- PlayerAddedToGame
 Player's app loads specified game.
 <- PlayerJoinedGame ...
+<- Complete Board State
 
 <- GameStarting
 -> PlayerThrowsProjectile ...

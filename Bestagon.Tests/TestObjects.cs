@@ -10,9 +10,9 @@ public static class TestObjects
         return client;
     }
 
-    public static PlayerLookingForGame BuildPlayerLookingForGame(this Client client)
+    public static Schema.LookingForGame BuildLookingForGame(this Client client)
     {
-        return new PlayerLookingForGame()
+        return new Schema.LookingForGame()
         {
             Username = client.Id,
         };

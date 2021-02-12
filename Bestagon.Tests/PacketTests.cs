@@ -28,15 +28,15 @@ public class PacketTests
     {
         Packet packet = new Packet();
         string username = "Tyler";
-        PlayerJoinedGame message = new PlayerJoinedGame() { Username = username };
+        Schema.JoinedGame message = new Schema.JoinedGame() { Username = username };
         Any any = Any.Pack(message);
         byte[] bytes = any.ToByteArray();
         packet.SetContents(bytes, bytes.Length);
         Assert.AreEqual(Constants.DEFAULT_BUFFER_SIZE, packet.Buffer.Length);
         CompareArrayToBuffer(any.ToByteArray(), packet.Buffer);
 
-        Assert.IsTrue(packet.Message.Is(PlayerJoinedGame.Descriptor));
-        Assert.AreEqual(username, packet.Message.Unpack<PlayerJoinedGame>().Username);
+        Assert.IsTrue(packet.Message.Is(Schema.JoinedGame.Descriptor));
+        Assert.AreEqual(username, packet.Message.Unpack<Schema.JoinedGame>().Username);
     }
 
     private byte[] GetBytes(string s)

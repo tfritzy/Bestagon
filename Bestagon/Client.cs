@@ -26,13 +26,13 @@ public class Client
             return;
         }
 
-        if (any.Is(PlayerLookingForGame.Descriptor))
+        if (any.Is(Schema.LookingForGame.Descriptor))
         {
-            AskForGame(any.Unpack<PlayerLookingForGame>());
+            AskForGame(any.Unpack<Schema.LookingForGame>());
         }
     }
 
-    private void AskForGame(PlayerLookingForGame playerLookingForGame)
+    private void AskForGame(Schema.LookingForGame playerLookingForGame)
     {
         this.Game = Server.FindGame(this);
     }
