@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Sockets;
 using Google.Protobuf.WellKnownTypes;
 
@@ -15,12 +13,6 @@ public class TCPConnection
 
     public TCPConnection(Action<Any> handleData)
     {
-        socket = new TcpClient
-        {
-            ReceiveBufferSize = DATA_BUFFER_SIZE,
-            SendBufferSize = DATA_BUFFER_SIZE,
-        };
-
         receiveBuffer = new byte[DATA_BUFFER_SIZE];
         ReceivedData = new Packet();
         HandleData = handleData;
@@ -35,9 +27,15 @@ public class TCPConnection
         }
     }
 
-    public void Connect(string ip, int port)
+    public void Connect(TcpClient client)
     {
-        socket.BeginConnect(ip, port, ConnectCallback, socket);
+        socket = client;
+        socket.ReceiveBufferSize = Constants.DEFAULT_BUFFER_SIZE;
+        socket.SendBufferSize = Constants.DEFAULT_BUFFER_SIZE;
+
+        Stream = socket.GetStream();
+
+        Stream.BeginRead(receiveBuffer, 0, Constants.DEFAULT_BUFFER_SIZE, ReceiveCallback, null);
     }
 
     private void ConnectCallback(IAsyncResult _result)

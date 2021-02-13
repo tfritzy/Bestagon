@@ -36,14 +36,13 @@ public class Server
 
     private void TCPConnectCallback(IAsyncResult _result)
     {
-        TcpClient _client = tcpListener.EndAcceptTcpClient(_result);
+        TcpClient tcpClient = tcpListener.EndAcceptTcpClient(_result);
         tcpListener.BeginAcceptTcpClient(TCPConnectCallback, null);
-        Console.WriteLine($"Incoming connection from {_client.Client.RemoteEndPoint}...");
+        Console.WriteLine($"Incoming connection from {tcpClient.Client.RemoteEndPoint}...");
 
         Client client = new Client(Guid.NewGuid().ToString("N"), this);
+        client.Connect(tcpClient);
         AddConnection(client);
-
-        Console.WriteLine($"{_client.Client.RemoteEndPoint} failed to connect: Server full!");
     }
 
     public bool AddConnection(Client client)

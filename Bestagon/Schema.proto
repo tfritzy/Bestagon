@@ -19,6 +19,7 @@ message Hexagon
 {
     int32 Id = 1;
     Vector2 Position = 2;
+    int32 Player = 3;
 }
 
 message Vector2

@@ -1,3 +1,4 @@
+using System.Net.Sockets;
 using Google.Protobuf.WellKnownTypes;
 
 public class Client
@@ -14,9 +15,9 @@ public class Client
         this.Server = server;
     }
 
-    public void Connect(string ip, int port)
+    public void Connect(TcpClient client)
     {
-        TCPConnection.Connect(ip, port);
+        TCPConnection.Connect(client);
     }
 
     public void HandleData(Any any)

@@ -11,4 +11,5 @@ public static class Constants
     public const float PixelsPerUnit = 1080f / ScreenWidth;
     public const float HorizontalDistanceBetweenHexagons = HEXAGON_r * 2 + HEXAGON_R;
     public const float VerticalDistanceBetweenHexagons = HEXAGON_r * 2;
+    public const int TICKS_PER_SECOND = 1;
 }

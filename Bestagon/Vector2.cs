@@ -9,15 +9,20 @@ public class Vector2
         this.Y = y;
     }
 
-    public override bool Equals(object other)
+    public override bool Equals(object obj)
     {
-        if (other is Vector2 == false)
+        if (this == null || obj == null)
         {
             return false;
         }
 
-        return ((Vector2)other).X == this.X &&
-               ((Vector2)other).Y == this.Y;
+        if (obj is Vector2 == false)
+        {
+            return false;
+        }
+
+        return ((Vector2)obj).X == this.X &&
+               ((Vector2)obj).Y == this.Y;
     }
 
     public override int GetHashCode()

@@ -23,7 +23,7 @@ public class GameTests
         HashSet<Vector2> positions = new HashSet<Vector2>();
         HashSet<int> ids = new HashSet<int>();
         Dictionary<int, int> playerHexCounts = new Dictionary<int, int>();
-        foreach (Hexagon hexagon in game.Board.Hexagons)
+        foreach (Hexagon hexagon in game.Board.Hexagons.Values)
         {
             Assert.IsFalse(positions.Contains(hexagon.Position));
             positions.Add(hexagon.Position);
@@ -47,6 +47,15 @@ public class GameTests
     public void Game_InitialBoardStateMessage()
     {
         Game game = new Game(2);
-        // BoardState boardState = game.Board.GetBoardState();
+        Schema.BoardState boardState = game.Board.GetBoardState();
+
+        HashSet<Hexagon> uniqueHexagons = new HashSet<Hexagon>();
+        foreach (Schema.Hexagon hexagon in boardState.Hexagons)
+        {
+            Assert.AreEqual(game.Board.Hexagons[hexagon.Id].Id, hexagon.Id);
+            Assert.AreEqual(game.Board.Hexagons[hexagon.Id].Player, hexagon.Player);
+            Assert.AreEqual(game.Board.Hexagons[hexagon.Id].Position.X, hexagon.Position.X);
+            Assert.AreEqual(game.Board.Hexagons[hexagon.Id].Position.Y, hexagon.Position.Y);
+        }
     }
 }

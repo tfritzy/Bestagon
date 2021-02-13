@@ -2,16 +2,27 @@ using System.Collections.Generic;
 
 public class Board
 {
-    public List<Hexagon> Hexagons;
+    public Dictionary<int, Hexagon> Hexagons;
 
     public Board()
     {
         SetupHexagons();
     }
 
+    public Schema.BoardState GetBoardState()
+    {
+        Schema.BoardState boardState = new Schema.BoardState();
+        foreach (Hexagon hexagon in Hexagons.Values)
+        {
+            boardState.Hexagons.Add(hexagon.ToContract());
+        }
+
+        return boardState;
+    }
+
     private void SetupHexagons()
     {
-        Hexagons = new List<Hexagon>();
+        Hexagons = new Dictionary<int, Hexagon>();
         int currentHexagonId = 0;
 
         // player 0
@@ -19,7 +30,7 @@ public class Board
         {
             for (int x = 0; x < Constants.NumHorizontalHexagons; x++)
             {
-                Hexagons.Add(new Hexagon(GetHexagonPosition(x, y), currentHexagonId, 0));
+                Hexagons.Add(currentHexagonId, new Hexagon(GetHexagonPosition(x, y), currentHexagonId, 0));
                 currentHexagonId += 1;
             }
         }
@@ -29,7 +40,7 @@ public class Board
         {
             for (int x = 0; x < Constants.NumHorizontalHexagons; x++)
             {
-                Hexagons.Add(new Hexagon(GetHexagonPosition(x, y), currentHexagonId, 1));
+                Hexagons.Add(currentHexagonId, new Hexagon(GetHexagonPosition(x, y), currentHexagonId, 1));
                 currentHexagonId += 1;
             }
         }

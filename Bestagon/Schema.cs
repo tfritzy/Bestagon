@@ -26,17 +26,17 @@ namespace Schema {
           string.Concat(
             "ChVCZXN0YWdvbi9TY2hlbWEucHJvdG8iHgoKSm9pbmVkR2FtZRIQCghVc2Vy",
             "bmFtZRgBIAEoCSIiCg5Mb29raW5nRm9yR2FtZRIQCghVc2VybmFtZRgBIAEo",
-            "CSIoCgpCb2FyZFN0YXRlEhoKCEhleGFnb25zGAEgAygLMgguSGV4YWdvbiIx",
+            "CSIoCgpCb2FyZFN0YXRlEhoKCEhleGFnb25zGAEgAygLMgguSGV4YWdvbiJB",
             "CgdIZXhhZ29uEgoKAklkGAEgASgFEhoKCFBvc2l0aW9uGAIgASgLMgguVmVj",
-            "dG9yMiIfCgdWZWN0b3IyEgkKAVgYASABKAISCQoBWRgCIAEoAkIJqgIGU2No",
-            "ZW1hYgZwcm90bzM="));
+            "dG9yMhIOCgZQbGF5ZXIYAyABKAUiHwoHVmVjdG9yMhIJCgFYGAEgASgCEgkK",
+            "AVkYAiABKAJCCaoCBlNjaGVtYWIGcHJvdG8z"));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
             new pbr::GeneratedClrTypeInfo(typeof(global::Schema.JoinedGame), global::Schema.JoinedGame.Parser, new[]{ "Username" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Schema.LookingForGame), global::Schema.LookingForGame.Parser, new[]{ "Username" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Schema.BoardState), global::Schema.BoardState.Parser, new[]{ "Hexagons" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Schema.Hexagon), global::Schema.Hexagon.Parser, new[]{ "Id", "Position" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Schema.Hexagon), global::Schema.Hexagon.Parser, new[]{ "Id", "Position", "Player" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Schema.Vector2), global::Schema.Vector2.Parser, new[]{ "X", "Y" }, null, null, null, null)
           }));
     }
@@ -580,6 +580,7 @@ namespace Schema {
     public Hexagon(Hexagon other) : this() {
       id_ = other.id_;
       position_ = other.position_ != null ? other.position_.Clone() : null;
+      player_ = other.player_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -610,6 +611,17 @@ namespace Schema {
       }
     }
 
+    /// <summary>Field number for the "Player" field.</summary>
+    public const int PlayerFieldNumber = 3;
+    private int player_;
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public int Player {
+      get { return player_; }
+      set {
+        player_ = value;
+      }
+    }
+
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public override bool Equals(object other) {
       return Equals(other as Hexagon);
@@ -625,6 +637,7 @@ namespace Schema {
       }
       if (Id != other.Id) return false;
       if (!object.Equals(Position, other.Position)) return false;
+      if (Player != other.Player) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -633,6 +646,7 @@ namespace Schema {
       int hash = 1;
       if (Id != 0) hash ^= Id.GetHashCode();
       if (position_ != null) hash ^= Position.GetHashCode();
+      if (Player != 0) hash ^= Player.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -657,6 +671,10 @@ namespace Schema {
         output.WriteRawTag(18);
         output.WriteMessage(Position);
       }
+      if (Player != 0) {
+        output.WriteRawTag(24);
+        output.WriteInt32(Player);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
       }
@@ -674,6 +692,10 @@ namespace Schema {
         output.WriteRawTag(18);
         output.WriteMessage(Position);
       }
+      if (Player != 0) {
+        output.WriteRawTag(24);
+        output.WriteInt32(Player);
+      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
       }
@@ -688,6 +710,9 @@ namespace Schema {
       }
       if (position_ != null) {
         size += 1 + pb::CodedOutputStream.ComputeMessageSize(Position);
+      }
+      if (Player != 0) {
+        size += 1 + pb::CodedOutputStream.ComputeInt32Size(Player);
       }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
@@ -708,6 +733,9 @@ namespace Schema {
           Position = new global::Schema.Vector2();
         }
         Position.MergeFrom(other.Position);
+      }
+      if (other.Player != 0) {
+        Player = other.Player;
       }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
@@ -734,6 +762,10 @@ namespace Schema {
             input.ReadMessage(Position);
             break;
           }
+          case 24: {
+            Player = input.ReadInt32();
+            break;
+          }
         }
       }
     #endif
@@ -757,6 +789,10 @@ namespace Schema {
               Position = new global::Schema.Vector2();
             }
             input.ReadMessage(Position);
+            break;
+          }
+          case 24: {
+            Player = input.ReadInt32();
             break;
           }
         }
