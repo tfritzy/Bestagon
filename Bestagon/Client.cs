@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Net.Sockets;
+using System.Threading.Tasks;
 using Google.Protobuf.WellKnownTypes;
 
 public class Client
@@ -14,7 +15,7 @@ public class Client
     public Client(string clientId, Server server)
     {
         this.Id = clientId;
-        this.TCPConnection = new TCPConnection(HandleData);
+        this.TCPConnection = new TCPConnection();
         this.Server = server;
         this.MessageLog = new LinkedList<Any>();
     }
@@ -24,7 +25,16 @@ public class Client
         TCPConnection.Connect(client);
     }
 
-    public void HandleData(Any any)
+    public async Task DrainMessageQueue()
+    {
+        while (TCPConnection.MessageQueue.Count > 0)
+        {
+            await HandleData(TCPConnection.MessageQueue.First.Value);
+            TCPConnection.MessageQueue.RemoveFirst();
+        }
+    }
+
+    public async Task HandleData(Any any)
     {
         if (any == null)
         {
@@ -35,11 +45,11 @@ public class Client
 
         if (any.Is(Schema.LookingForGame.Descriptor))
         {
-            AskForGame(any.Unpack<Schema.LookingForGame>());
+            await AskForGame(any.Unpack<Schema.LookingForGame>());
         }
     }
 
-    private void AskForGame(Schema.LookingForGame playerLookingForGame)
+    private async Task AskForGame(Schema.LookingForGame playerLookingForGame)
     {
         this.Game = Server.FindGame(this);
 
@@ -49,15 +59,15 @@ public class Client
         };
 
         Console.WriteLine("Telling player they got a game");
-        this.SendMessage(Any.Pack(joinedGame));
+        await this.SendMessage(Any.Pack(joinedGame));
 
         Console.WriteLine("Telling player initial board state");
-        this.SendMessage(Any.Pack(Game.Board.GetBoardState()));
+        await this.SendMessage(Any.Pack(Game.Board.GetBoardState()));
     }
 
-    private void SendMessage(Any message)
+    private async Task SendMessage(Any message)
     {
-        this.TCPConnection.SendMessage(message);
+        await this.TCPConnection.SendMessage(message);
         this.MessageLog.AddLast(message);
     }
 }

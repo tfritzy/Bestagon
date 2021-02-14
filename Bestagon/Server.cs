@@ -4,10 +4,14 @@ using System.Collections.Generic;
 using System.Text;
 using System.Net;
 using System.Net.Sockets;
+using System.Threading.Tasks;
+using System.Threading;
+
 public class Server
 {
     private static TcpListener tcpListener;
     private static List<Client> clients = new List<Client>();
+    private List<Thread> threads = new List<Thread>();
 
     public Server(int port, int maxPlayers)
     {
@@ -57,6 +61,21 @@ public class Server
         return true;
     }
 
+    public void Update()
+    {
+        while (true)
+        {
+            try
+            {
+                foreach (Client client in clients)
+                {
+                    client.DrainMessageQueue().Wait();
+                }
+            }
+            catch (InvalidOperationException) { }
+        }
+    }
+
     public Game FindGame(Client client)
     {
         if (client.Game != null)
@@ -79,8 +98,9 @@ public class Server
         }
         else
         {
-            OpenGames.AddLast(new Game(MaxPlayersPerGame));
-            OpenGames.Last.Value.Players.Add(client);
+            Game game = new Game(MaxPlayersPerGame);
+            OpenGames.AddLast(game);
+            game.Players.Add(client);
             return OpenGames.Last.Value;
         }
     }

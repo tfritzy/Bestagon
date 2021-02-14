@@ -46,7 +46,7 @@ public class GameTests
         Schema.BoardState boardState = game.Board.GetBoardState();
 
         HashSet<Hexagon> uniqueHexagons = new HashSet<Hexagon>();
-        foreach (Schema.HexagonSet hexSet in boardState.PlayerHexagons)
+        foreach (Schema.HexagonSet hexSet in boardState.HexagonSets)
         {
             foreach (Schema.Hexagon hexagon in hexSet.Hexagons)
             {

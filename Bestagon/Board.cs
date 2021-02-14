@@ -65,8 +65,8 @@ public class Board
 
     private Vector2 GetHexagonPosition(int x, int y)
     {
-        return new Vector2(
-            x * Constants.HorizontalDistanceBetweenHexagons + (x % 2 == 1 ? Constants.HEXAGON_R : 0),
-            y * Constants.VerticalDistanceBetweenHexagons + (y % 2 == 1 ? Constants.HEXAGON_r : 0));
+        float xF = x * Constants.HorizontalDistanceBetweenHexagons;
+        float yF = y * Constants.VerticalDistanceBetweenHexagons + (x % 2 == 1 ? Constants.HEXAGON_r : 0);
+        return new Vector2(xF, yF);
     }
 }

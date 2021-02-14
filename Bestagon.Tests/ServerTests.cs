@@ -44,7 +44,8 @@ public class ServerTests
         Assert.IsTrue(client.MessageLog.Last.Value.Is(Schema.BoardState.Descriptor));
         Schema.BoardState boardState = client.MessageLog.Last.Value.Unpack<Schema.BoardState>();
         byte[] bytes = boardState.ToByteArray();
-        int totalHexagonCount = boardState.PlayerHexagons[0].Hexagons.Count + boardState.PlayerHexagons[1].Hexagons.Count;
+        Assert.IsTrue(bytes.Length < Constants.DEFAULT_BUFFER_SIZE);
+        int totalHexagonCount = boardState.HexagonSets[0].Hexagons.Count + boardState.HexagonSets[1].Hexagons.Count;
         Assert.AreEqual(Constants.RowsPerPlayer * Constants.HexagonsPerRow * 2, totalHexagonCount);
     }
 }

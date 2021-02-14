@@ -8,29 +8,30 @@ class Program
         Server server = new Server(8080, 2);
 
         Thread mainThread = new Thread(new ThreadStart(MainThread));
+        Thread updateThread = new Thread(new ThreadStart(server.Update));
         mainThread.Start();
+        updateThread.Start();
 
         server.Start();
     }
 
     private static void MainThread()
     {
-        Console.WriteLine($"Main thread started. Running at {Constants.TICKS_PER_SECOND} ticks per second.");
         DateTime _nextLoop = DateTime.Now;
 
         while (true)
         {
-            // while (_nextLoop < DateTime.Now)
-            // {
-            //     // GameLogic.Update(); // Execute game logic
+            while (_nextLoop < DateTime.Now)
+            {
+                // GameLogic.Update(); // Execute game logic
 
-            //     _nextLoop = _nextLoop.AddMilliseconds(Constants.MS_PER_TICK);
+                _nextLoop = _nextLoop.AddMilliseconds(Constants.MS_Between_Updates);
 
-            //     if (_nextLoop > DateTime.Now)
-            //     {
-            //         Thread.Sleep(_nextLoop - DateTime.Now); // Let the thread sleep until it's needed again.
-            //     }
-            // }
+                if (_nextLoop > DateTime.Now)
+                {
+                    Thread.Sleep(_nextLoop - DateTime.Now); // Let the thread sleep until it's needed again.
+                }
+            }
         }
     }
 }

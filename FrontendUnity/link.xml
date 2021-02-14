@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<linker>
+  <assembly fullname="Google">
+    <type fullname="Google.Protobuf" preseve="all"/>
+    <type fullname="System.Runtime.ComplierServices.Unsafe" preseve="all"/>
+    <type fullname="System.Memory" preseve="all"/>
+    <type fullname="System.Buffers" preseve="all"/>
+  </assembly>
+</linker>
