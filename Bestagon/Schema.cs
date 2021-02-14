@@ -25,18 +25,18 @@ namespace Schema {
       byte[] descriptorData = global::System.Convert.FromBase64String(
           string.Concat(
             "CgxTY2hlbWEucHJvdG8iHgoKSm9pbmVkR2FtZRIQCghVc2VybmFtZRgBIAEo",
-            "CSIiCg5Mb29raW5nRm9yR2FtZRIQCghVc2VybmFtZRgBIAEoCSIxCgpCb2Fy",
-            "ZFN0YXRlEiMKDlBsYXllckhleGFnb25zGAEgAygLMgsuSGV4YWdvblNldCI6",
-            "CgpIZXhhZ29uU2V0EhAKCFBsYXllcklkGAEgASgFEhoKCEhleGFnb25zGAIg",
-            "AygLMgguSGV4YWdvbiIxCgdIZXhhZ29uEgoKAklkGAEgASgFEhoKCFBvc2l0",
-            "aW9uGAIgASgLMgguVmVjdG9yMiIfCgdWZWN0b3IyEgkKAVgYASABKAISCQoB",
-            "WRgCIAEoAkIJqgIGU2NoZW1hYgZwcm90bzM="));
+            "CSIiCg5Mb29raW5nRm9yR2FtZRIQCghVc2VybmFtZRgBIAEoCSIuCgpCb2Fy",
+            "ZFN0YXRlEiAKC0hleGFnb25TZXRzGAEgAygLMgsuSGV4YWdvblNldCI6CgpI",
+            "ZXhhZ29uU2V0EhAKCFBsYXllcklkGAEgASgFEhoKCEhleGFnb25zGAIgAygL",
+            "MgguSGV4YWdvbiIxCgdIZXhhZ29uEgoKAklkGAEgASgFEhoKCFBvc2l0aW9u",
+            "GAIgASgLMgguVmVjdG9yMiIfCgdWZWN0b3IyEgkKAVgYASABKAISCQoBWRgC",
+            "IAEoAkIJqgIGU2NoZW1hYgZwcm90bzM="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
           new pbr::GeneratedClrTypeInfo(null, null, new pbr::GeneratedClrTypeInfo[] {
             new pbr::GeneratedClrTypeInfo(typeof(global::Schema.JoinedGame), global::Schema.JoinedGame.Parser, new[]{ "Username" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Schema.LookingForGame), global::Schema.LookingForGame.Parser, new[]{ "Username" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Schema.BoardState), global::Schema.BoardState.Parser, new[]{ "PlayerHexagons" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Schema.BoardState), global::Schema.BoardState.Parser, new[]{ "HexagonSets" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Schema.HexagonSet), global::Schema.HexagonSet.Parser, new[]{ "PlayerId", "Hexagons" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Schema.Hexagon), global::Schema.Hexagon.Parser, new[]{ "Id", "Position" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Schema.Vector2), global::Schema.Vector2.Parser, new[]{ "X", "Y" }, null, null, null, null)
@@ -419,7 +419,7 @@ namespace Schema {
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public BoardState(BoardState other) : this() {
-      playerHexagons_ = other.playerHexagons_.Clone();
+      hexagonSets_ = other.hexagonSets_.Clone();
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -428,14 +428,14 @@ namespace Schema {
       return new BoardState(this);
     }
 
-    /// <summary>Field number for the "PlayerHexagons" field.</summary>
-    public const int PlayerHexagonsFieldNumber = 1;
-    private static readonly pb::FieldCodec<global::Schema.HexagonSet> _repeated_playerHexagons_codec
+    /// <summary>Field number for the "HexagonSets" field.</summary>
+    public const int HexagonSetsFieldNumber = 1;
+    private static readonly pb::FieldCodec<global::Schema.HexagonSet> _repeated_hexagonSets_codec
         = pb::FieldCodec.ForMessage(10, global::Schema.HexagonSet.Parser);
-    private readonly pbc::RepeatedField<global::Schema.HexagonSet> playerHexagons_ = new pbc::RepeatedField<global::Schema.HexagonSet>();
+    private readonly pbc::RepeatedField<global::Schema.HexagonSet> hexagonSets_ = new pbc::RepeatedField<global::Schema.HexagonSet>();
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public pbc::RepeatedField<global::Schema.HexagonSet> PlayerHexagons {
-      get { return playerHexagons_; }
+    public pbc::RepeatedField<global::Schema.HexagonSet> HexagonSets {
+      get { return hexagonSets_; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -451,14 +451,14 @@ namespace Schema {
       if (ReferenceEquals(other, this)) {
         return true;
       }
-      if(!playerHexagons_.Equals(other.playerHexagons_)) return false;
+      if(!hexagonSets_.Equals(other.hexagonSets_)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public override int GetHashCode() {
       int hash = 1;
-      hash ^= playerHexagons_.GetHashCode();
+      hash ^= hexagonSets_.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -475,7 +475,7 @@ namespace Schema {
     #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
       output.WriteRawMessage(this);
     #else
-      playerHexagons_.WriteTo(output, _repeated_playerHexagons_codec);
+      hexagonSets_.WriteTo(output, _repeated_hexagonSets_codec);
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
       }
@@ -485,7 +485,7 @@ namespace Schema {
     #if !GOOGLE_PROTOBUF_REFSTRUCT_COMPATIBILITY_MODE
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     void pb::IBufferMessage.InternalWriteTo(ref pb::WriteContext output) {
-      playerHexagons_.WriteTo(ref output, _repeated_playerHexagons_codec);
+      hexagonSets_.WriteTo(ref output, _repeated_hexagonSets_codec);
       if (_unknownFields != null) {
         _unknownFields.WriteTo(ref output);
       }
@@ -495,7 +495,7 @@ namespace Schema {
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public int CalculateSize() {
       int size = 0;
-      size += playerHexagons_.CalculateSize(_repeated_playerHexagons_codec);
+      size += hexagonSets_.CalculateSize(_repeated_hexagonSets_codec);
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
       }
@@ -507,7 +507,7 @@ namespace Schema {
       if (other == null) {
         return;
       }
-      playerHexagons_.Add(other.playerHexagons_);
+      hexagonSets_.Add(other.hexagonSets_);
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
 
@@ -523,7 +523,7 @@ namespace Schema {
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, input);
             break;
           case 10: {
-            playerHexagons_.AddEntriesFrom(input, _repeated_playerHexagons_codec);
+            hexagonSets_.AddEntriesFrom(input, _repeated_hexagonSets_codec);
             break;
           }
         }
@@ -541,7 +541,7 @@ namespace Schema {
             _unknownFields = pb::UnknownFieldSet.MergeFieldFrom(_unknownFields, ref input);
             break;
           case 10: {
-            playerHexagons_.AddEntriesFrom(ref input, _repeated_playerHexagons_codec);
+            hexagonSets_.AddEntriesFrom(ref input, _repeated_hexagonSets_codec);
             break;
           }
         }

@@ -12,7 +12,7 @@ message LookingForGame
 
 message BoardState
 {
-    repeated HexagonSet PlayerHexagons = 1;
+    repeated HexagonSet HexagonSets = 1;
 }
 
 message HexagonSet

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Net.Sockets;
 using Google.Protobuf.WellKnownTypes;
@@ -47,7 +48,10 @@ public class Client
             Username = this.Id,
         };
 
+        Console.WriteLine("Telling player they got a game");
         this.SendMessage(Any.Pack(joinedGame));
+
+        Console.WriteLine("Telling player initial board state");
         this.SendMessage(Any.Pack(Game.Board.GetBoardState()));
     }
 

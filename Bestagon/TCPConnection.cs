@@ -6,7 +6,6 @@ using Google.Protobuf.WellKnownTypes;
 public class TCPConnection
 {
     public TcpClient socket;
-    public const int DATA_BUFFER_SIZE = 1024;
     private byte[] receiveBuffer;
     public NetworkStream Stream;
     public Packet ReceivedData;
@@ -14,7 +13,13 @@ public class TCPConnection
 
     public TCPConnection(Action<Any> handleData)
     {
-        receiveBuffer = new byte[DATA_BUFFER_SIZE];
+        socket = new TcpClient
+        {
+            ReceiveBufferSize = Constants.DEFAULT_BUFFER_SIZE,
+            SendBufferSize = Constants.DEFAULT_BUFFER_SIZE,
+        };
+
+        receiveBuffer = new byte[Constants.DEFAULT_BUFFER_SIZE];
         ReceivedData = new Packet();
         HandleData = handleData;
     }
@@ -30,18 +35,14 @@ public class TCPConnection
 
     public void SendMessage(Any any)
     {
-        try
-        {
-            if (Stream != null)
-            {
-                byte[] bytes = any.ToByteArray();
-                Stream.BeginWrite(bytes, 0, bytes.Length, null, null);
-            }
-        }
-        catch (Exception _ex)
-        {
-            Console.WriteLine($"Error sending data to server via TCP: {_ex}");
-        }
+        byte[] bytes = any.ToByteArray();
+        Console.WriteLine($"Sending {bytes.Length} byte message");
+        Stream.BeginWrite(bytes, 0, bytes.Length, WriteCallback, Stream);
+    }
+
+    private void WriteCallback(IAsyncResult _result)
+    {
+        Stream.EndWrite(_result);
     }
 
     public void Connect(TcpClient client)
@@ -52,7 +53,12 @@ public class TCPConnection
 
         Stream = socket.GetStream();
 
-        Stream.BeginRead(receiveBuffer, 0, Constants.DEFAULT_BUFFER_SIZE, ReceiveCallback, null);
+        Stream.BeginRead(receiveBuffer, 0, Constants.DEFAULT_BUFFER_SIZE, ReceiveCallback, Stream);
+    }
+
+    public void Connect(string ip, int port)
+    {
+        socket.BeginConnect(ip, port, ConnectCallback, socket);
     }
 
     private void ConnectCallback(IAsyncResult _result)
@@ -66,20 +72,15 @@ public class TCPConnection
 
         Stream = socket.GetStream();
 
-        Stream.BeginRead(ReceiveBuffer, 0, DATA_BUFFER_SIZE, ReceiveCallback, null);
+        Stream.BeginRead(ReceiveBuffer, 0, Constants.DEFAULT_BUFFER_SIZE, ReceiveCallback, Stream);
     }
 
     private void ReceiveCallback(IAsyncResult _result)
     {
-        try
-        {
-            int packetLength = Stream.EndRead(_result);
-            ExtractDataFromBuffer(packetLength);
-        }
-        catch
-        {
-            // Disconnect();
-        }
+        int packetLength = Stream.EndRead(_result);
+        Console.WriteLine($"Received {packetLength} byte message");
+        Stream.BeginRead(receiveBuffer, 0, Constants.DEFAULT_BUFFER_SIZE, ReceiveCallback, Stream);
+        ExtractDataFromBuffer(packetLength);
     }
 
     public void ExtractDataFromBuffer(int dataEndIndex)

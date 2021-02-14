@@ -28,7 +28,7 @@ public class Board
             {
                 hexagonSet.Hexagons.Add(hexagon.ToContract());
             }
-            boardState.PlayerHexagons.Add(hexagonSet);
+            boardState.HexagonSets.Add(hexagonSet);
         }
 
         return boardState;
