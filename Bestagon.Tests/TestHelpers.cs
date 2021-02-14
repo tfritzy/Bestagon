@@ -8,5 +8,6 @@ public static class TestHelpers
         byte[] bytes = any.ToByteArray();
         client.TCPConnection.ReceiveBuffer = bytes;
         client.TCPConnection.ExtractDataFromBuffer(bytes.Length);
+        client.DrainMessageQueue();
     }
 }

@@ -8,7 +8,7 @@ using Google.Protobuf.WellKnownTypes;
 
 public class TCPConnection
 {
-    public TcpClient socket;
+    public TcpClient tcpClient;
     private byte[] receiveBuffer;
     public NetworkStream Stream;
     public Packet ReceivedData;
@@ -17,7 +17,7 @@ public class TCPConnection
 
     public TCPConnection()
     {
-        socket = new TcpClient
+        tcpClient = new TcpClient
         {
             ReceiveBufferSize = Constants.DEFAULT_BUFFER_SIZE,
             SendBufferSize = Constants.DEFAULT_BUFFER_SIZE,
@@ -46,11 +46,11 @@ public class TCPConnection
 
     public void Connect(TcpClient client)
     {
-        socket = client;
-        socket.ReceiveBufferSize = Constants.DEFAULT_BUFFER_SIZE;
-        socket.SendBufferSize = Constants.DEFAULT_BUFFER_SIZE;
+        tcpClient = client;
+        tcpClient.ReceiveBufferSize = Constants.DEFAULT_BUFFER_SIZE;
+        tcpClient.SendBufferSize = Constants.DEFAULT_BUFFER_SIZE;
 
-        Stream = socket.GetStream();
+        Stream = tcpClient.GetStream();
         Stream.WriteTimeout = 1000;
 
         Stream.BeginRead(receiveBuffer, 0, Constants.DEFAULT_BUFFER_SIZE, ReceiveCallback, Stream);
@@ -58,19 +58,19 @@ public class TCPConnection
 
     public void Connect(string ip, int port)
     {
-        socket.BeginConnect(ip, port, ConnectCallback, socket);
+        tcpClient.BeginConnect(ip, port, ConnectCallback, tcpClient);
     }
 
     private void ConnectCallback(IAsyncResult _result)
     {
-        socket.EndConnect(_result);
+        tcpClient.EndConnect(_result);
 
-        if (!socket.Connected)
+        if (!tcpClient.Connected)
         {
             return;
         }
 
-        Stream = socket.GetStream();
+        Stream = tcpClient.GetStream();
 
         Stream.BeginRead(ReceiveBuffer, 0, Constants.DEFAULT_BUFFER_SIZE, ReceiveCallback, Stream);
     }

@@ -8,31 +8,34 @@ public class ServerTests
     [TestMethod]
     public void Server_TestPortAndPlayers()
     {
-        Server server = new Server(8080, 4);
-        Assert.AreEqual(4, server.MaxPlayersPerGame);
+        Server server = new Server(8080);
         Assert.AreEqual(8080, server.Port);
     }
 
     [TestMethod]
     public void Server_AddConnection()
     {
-        Server server = new Server(8080, 1);
+        Server server = new Server(8080);
         Client client = new Client("0", server);
         Client client2 = new Client("1", server);
+        Client client3 = new Client("2", server);
 
         Assert.AreEqual(0, server.PlayerCount);
 
         Assert.IsTrue(server.AddConnection(client));
         Assert.AreEqual(1, server.PlayerCount);
 
-        Assert.IsFalse(server.AddConnection(client2));
-        Assert.AreEqual(1, server.PlayerCount);
+        Assert.IsTrue(server.AddConnection(client2));
+        Assert.AreEqual(2, server.PlayerCount);
+
+        Assert.IsTrue(server.AddConnection(client3));
+        Assert.AreEqual(3, server.PlayerCount);
     }
 
     [TestMethod]
     public void Server_ClientLookingForGame()
     {
-        Server server = new Server(8080, 2);
+        Server server = new Server(8080);
         Client client = TestObjects.BuildClient(server);
         client.ClientSendToServer(Any.Pack(client.BuildLookingForGame()));
 

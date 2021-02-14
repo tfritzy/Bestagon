@@ -6,19 +6,18 @@ public class Game
 {
     public List<Client> Players;
     public Board Board;
-    public int MaxPlayers;
+    public const int MaxPlayers = 2;
     public bool IsGameRunning;
 
-    public Game(int maxPlayers)
+    public Game()
     {
         this.Players = new List<Client>();
-        this.MaxPlayers = maxPlayers;
         this.Board = new Board();
         IsGameRunning = true;
     }
 
     public bool IsFull()
     {
-        return Players.Count >= this.MaxPlayers;
+        return Players.Count >= MaxPlayers;
     }
 }

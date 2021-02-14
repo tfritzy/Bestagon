@@ -10,7 +10,7 @@ public class ClientTests
     [TestMethod]
     public void Client_Constructor()
     {
-        Server server = new Server(8080, 2);
+        Server server = new Server(8080);
         string id = Guid.NewGuid().ToString("N");
         Client client = new Client(id, server);
         Assert.AreEqual(id, client.Id);
@@ -74,7 +74,7 @@ public class ClientTests
     [TestMethod]
     public void Client_HandleMultiplePlayersLookingForGame()
     {
-        Server server = new Server(8080, 2);
+        Server server = new Server(8080);
         Client client1 = TestObjects.BuildClient(server);
         Client client2 = TestObjects.BuildClient(server);
         Client client3 = TestObjects.BuildClient(server);

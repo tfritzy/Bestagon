@@ -9,17 +9,15 @@ public class GameTests
     [TestMethod]
     public void Game_Constructor()
     {
-        Game game = new Game(2);
+        Game game = new Game();
         Assert.IsNotNull(game.Board);
-        Assert.AreEqual(2, game.MaxPlayers);
         Assert.IsNotNull(game.Players);
     }
 
     [TestMethod]
     public void Game_BoardSetup()
     {
-        Game game = new Game(2);
-
+        Game game = new Game();
         HashSet<Vector2> positions = new HashSet<Vector2>();
         HashSet<int> ids = new HashSet<int>();
         foreach (int playerId in game.Board.Hexagons.Keys)
@@ -42,7 +40,7 @@ public class GameTests
     [TestMethod]
     public void Game_InitialBoardStateMessage()
     {
-        Game game = new Game(2);
+        Game game = new Game();
         Schema.BoardState boardState = game.Board.GetBoardState();
 
         HashSet<Hexagon> uniqueHexagons = new HashSet<Hexagon>();
@@ -55,5 +53,12 @@ public class GameTests
                 Assert.AreEqual(game.Board.Hexagons[hexSet.PlayerId][hexagon.Id].Position.Y, hexagon.Position.Y);
             }
         }
+    }
+
+    [TestMethod]
+    public void Game_DestroyHexagons()
+    {
+        Game game = new Game();
+
     }
 }

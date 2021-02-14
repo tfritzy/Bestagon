@@ -25,16 +25,16 @@ public class Client
         TCPConnection.Connect(client);
     }
 
-    public async Task DrainMessageQueue()
+    public void DrainMessageQueue()
     {
         while (TCPConnection.MessageQueue.Count > 0)
         {
-            await HandleData(TCPConnection.MessageQueue.First.Value);
+            HandleData(TCPConnection.MessageQueue.First.Value);
             TCPConnection.MessageQueue.RemoveFirst();
         }
     }
 
-    public async Task HandleData(Any any)
+    public void HandleData(Any any)
     {
         if (any == null)
         {
@@ -45,11 +45,11 @@ public class Client
 
         if (any.Is(Schema.LookingForGame.Descriptor))
         {
-            await AskForGame(any.Unpack<Schema.LookingForGame>());
+            AskForGame(any.Unpack<Schema.LookingForGame>());
         }
     }
 
-    private async Task AskForGame(Schema.LookingForGame playerLookingForGame)
+    private void AskForGame(Schema.LookingForGame playerLookingForGame)
     {
         this.Game = Server.FindGame(this);
 
@@ -59,15 +59,15 @@ public class Client
         };
 
         Console.WriteLine("Telling player they got a game");
-        await this.SendMessage(Any.Pack(joinedGame));
+        this.SendMessage(Any.Pack(joinedGame));
 
         Console.WriteLine("Telling player initial board state");
-        await this.SendMessage(Any.Pack(Game.Board.GetBoardState()));
+        this.SendMessage(Any.Pack(Game.Board.GetBoardState()));
     }
 
-    private async Task SendMessage(Any message)
+    private void SendMessage(Any message)
     {
-        await this.TCPConnection.SendMessage(message);
+        this.TCPConnection.SendMessage(message);
         this.MessageLog.AddLast(message);
     }
 }

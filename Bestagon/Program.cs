@@ -5,7 +5,7 @@ class Program
 {
     static void Main(string[] args)
     {
-        Server server = new Server(8080, 2);
+        Server server = new Server(8080);
 
         Thread mainThread = new Thread(new ThreadStart(MainThread));
         Thread updateThread = new Thread(new ThreadStart(server.Update));

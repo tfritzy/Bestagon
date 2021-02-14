@@ -13,16 +13,14 @@ public class Server
     private static List<Client> clients = new List<Client>();
     private List<Thread> threads = new List<Thread>();
 
-    public Server(int port, int maxPlayers)
+    public Server(int port)
     {
-        this.MaxPlayersPerGame = maxPlayers;
         this.Port = port;
         this.OpenGames = new LinkedList<Game>();
         this.RunningGames = new LinkedList<Game>();
     }
 
     public int Port { get; }
-    public int MaxPlayersPerGame { get; }
     public int PlayerCount { get { return clients.Count; } }
     public LinkedList<Game> OpenGames;
     public LinkedList<Game> RunningGames;
@@ -51,11 +49,6 @@ public class Server
 
     public bool AddConnection(Client client)
     {
-        if (PlayerCount >= MaxPlayersPerGame)
-        {
-            return false;
-        }
-
         clients.Add(client);
 
         return true;
@@ -69,7 +62,7 @@ public class Server
             {
                 foreach (Client client in clients)
                 {
-                    client.DrainMessageQueue().Wait();
+                    client.DrainMessageQueue();
                 }
             }
             catch (InvalidOperationException) { }
@@ -98,7 +91,7 @@ public class Server
         }
         else
         {
-            Game game = new Game(MaxPlayersPerGame);
+            Game game = new Game();
             OpenGames.AddLast(game);
             game.Players.Add(client);
             return OpenGames.Last.Value;
