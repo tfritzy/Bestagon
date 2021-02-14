@@ -19,7 +19,7 @@ public class Server
 
     public int Port { get; }
     public int MaxPlayersPerGame { get; }
-    public int CurrentPlayers { get { return clients.Count; } }
+    public int PlayerCount { get { return clients.Count; } }
     public LinkedList<Game> OpenGames;
     public LinkedList<Game> RunningGames;
 
@@ -47,7 +47,7 @@ public class Server
 
     public bool AddConnection(Client client)
     {
-        if (CurrentPlayers >= MaxPlayersPerGame)
+        if (PlayerCount >= MaxPlayersPerGame)
         {
             return false;
         }

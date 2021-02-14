@@ -62,13 +62,13 @@ public class ClientTests
     {
         Client client = TestObjects.BuildClient();
         Schema.LookingForGame playerLookingForGame = client.BuildLookingForGame();
-        client.SendTestMessage(Any.Pack(playerLookingForGame));
+        client.ClientSendToServer(Any.Pack(playerLookingForGame));
 
         Assert.IsNotNull(client.Game);
         CollectionAssert.Contains(client.Game.Players, client);
         Game originalGame = client.Game;
 
-        client.SendTestMessage(Any.Pack(playerLookingForGame));
+        client.ClientSendToServer(Any.Pack(playerLookingForGame));
         Assert.AreEqual(1, client.Game.Players.Count);
         Assert.AreEqual(originalGame, client.Game);
         Assert.AreEqual(1, client.Server.OpenGames.Count);
@@ -82,9 +82,9 @@ public class ClientTests
         Client client2 = TestObjects.BuildClient(server);
         Client client3 = TestObjects.BuildClient(server);
 
-        client1.SendTestMessage(Any.Pack(client1.BuildLookingForGame()));
-        client2.SendTestMessage(Any.Pack(client2.BuildLookingForGame()));
-        client3.SendTestMessage(Any.Pack(client3.BuildLookingForGame()));
+        client1.ClientSendToServer(Any.Pack(client1.BuildLookingForGame()));
+        client2.ClientSendToServer(Any.Pack(client2.BuildLookingForGame()));
+        client3.ClientSendToServer(Any.Pack(client3.BuildLookingForGame()));
 
         Assert.AreEqual(1, server.OpenGames.Count);
         Assert.AreEqual(1, server.RunningGames.Count);

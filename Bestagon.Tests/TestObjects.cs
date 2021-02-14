@@ -1,6 +1,8 @@
 using System;
+using System.Net.Sockets;
 using Google.Protobuf;
 using Google.Protobuf.WellKnownTypes;
+using Moq;
 
 public static class TestObjects
 {
@@ -16,12 +18,5 @@ public static class TestObjects
         {
             Username = client.Id,
         };
-    }
-
-    public static void SendTestMessage(this Client client, Any any)
-    {
-        byte[] bytes = any.ToByteArray();
-        client.TCPConnection.ReceiveBuffer = bytes;
-        client.TCPConnection.ExtractDataFromBuffer(bytes.Length);
     }
 }

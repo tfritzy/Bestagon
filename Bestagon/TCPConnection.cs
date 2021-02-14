@@ -1,5 +1,6 @@
 using System;
 using System.Net.Sockets;
+using Google.Protobuf;
 using Google.Protobuf.WellKnownTypes;
 
 public class TCPConnection
@@ -24,6 +25,22 @@ public class TCPConnection
         set
         {
             Array.Copy(value, receiveBuffer, value.Length);
+        }
+    }
+
+    public void SendMessage(Any any)
+    {
+        try
+        {
+            if (Stream != null)
+            {
+                byte[] bytes = any.ToByteArray();
+                Stream.BeginWrite(bytes, 0, bytes.Length, null, null);
+            }
+        }
+        catch (Exception _ex)
+        {
+            Console.WriteLine($"Error sending data to server via TCP: {_ex}");
         }
     }
 
