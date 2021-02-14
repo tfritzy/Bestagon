@@ -2,7 +2,11 @@ using System.Collections.Generic;
 
 public class Board
 {
-    public Dictionary<int, Hexagon> Hexagons;
+    /// <summary>
+    /// All the hexagons present on the board.
+    /// Key is playerId. value is dictionary of hexagonId to hexagon.
+    /// </summary>
+    public Dictionary<int, Dictionary<int, Hexagon>> Hexagons;
 
     public Board()
     {
@@ -12,9 +16,19 @@ public class Board
     public Schema.BoardState GetBoardState()
     {
         Schema.BoardState boardState = new Schema.BoardState();
-        foreach (Hexagon hexagon in Hexagons.Values)
+
+        foreach (int player in Hexagons.Keys)
         {
-            boardState.Hexagons.Add(hexagon.ToContract());
+            Schema.HexagonSet hexagonSet = new Schema.HexagonSet
+            {
+                PlayerId = player,
+            };
+
+            foreach (Hexagon hexagon in Hexagons[player].Values)
+            {
+                hexagonSet.Hexagons.Add(hexagon.ToContract());
+            }
+            boardState.PlayerHexagons.Add(hexagonSet);
         }
 
         return boardState;
@@ -22,25 +36,28 @@ public class Board
 
     private void SetupHexagons()
     {
-        Hexagons = new Dictionary<int, Hexagon>();
+        Hexagons = new Dictionary<int, Dictionary<int, Hexagon>>();
         int currentHexagonId = 0;
 
+        Hexagons[0] = new Dictionary<int, Hexagon>();
+        Hexagons[1] = new Dictionary<int, Hexagon>();
+
         // player 0
-        for (int y = 0; y < Constants.NumRowsPerPlayer; y++)
+        for (int y = 0; y < Constants.RowsPerPlayer; y++)
         {
-            for (int x = 0; x < Constants.NumHorizontalHexagons; x++)
+            for (int x = 0; x < Constants.HexagonsPerRow; x++)
             {
-                Hexagons.Add(currentHexagonId, new Hexagon(GetHexagonPosition(x, y), currentHexagonId, 0));
+                Hexagons[0].Add(currentHexagonId, new Hexagon(GetHexagonPosition(x, y), currentHexagonId));
                 currentHexagonId += 1;
             }
         }
 
         // player 1
-        for (int y = Constants.NumVerticalHexagonSlots - Constants.NumRowsPerPlayer; y < Constants.NumVerticalHexagonSlots; y++)
+        for (int y = Constants.NumVerticalHexagonSlots - Constants.RowsPerPlayer; y < Constants.NumVerticalHexagonSlots; y++)
         {
-            for (int x = 0; x < Constants.NumHorizontalHexagons; x++)
+            for (int x = 0; x < Constants.HexagonsPerRow; x++)
             {
-                Hexagons.Add(currentHexagonId, new Hexagon(GetHexagonPosition(x, y), currentHexagonId, 1));
+                Hexagons[1].Add(currentHexagonId, new Hexagon(GetHexagonPosition(x, y), currentHexagonId));
                 currentHexagonId += 1;
             }
         }

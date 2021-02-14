@@ -12,14 +12,19 @@ message LookingForGame
 
 message BoardState
 {
-    repeated Hexagon Hexagons = 1;
+    repeated HexagonSet PlayerHexagons = 1;
+}
+
+message HexagonSet
+{
+    int32 PlayerId = 1;
+    repeated Hexagon Hexagons = 2;
 }
 
 message Hexagon
 {
     int32 Id = 1;
     Vector2 Position = 2;
-    int32 Player = 3;
 }
 
 message Vector2

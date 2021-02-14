@@ -22,9 +22,6 @@ public class ClientTests
     {
         Client client = TestObjects.BuildClient();
         Assert.IsNotNull(client.TCPConnection);
-        Assert.IsNotNull(client.TCPConnection.socket);
-        Assert.AreEqual(TCPConnection.DATA_BUFFER_SIZE, client.TCPConnection.socket.SendBufferSize);
-        Assert.AreEqual(TCPConnection.DATA_BUFFER_SIZE, client.TCPConnection.socket.ReceiveBufferSize);
         Assert.IsNotNull(client.TCPConnection.ReceiveBuffer);
         Assert.AreEqual(TCPConnection.DATA_BUFFER_SIZE, client.TCPConnection.ReceiveBuffer.Length);
         Assert.IsNotNull(client.TCPConnection.ReceivedData);

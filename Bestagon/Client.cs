@@ -48,6 +48,7 @@ public class Client
         };
 
         this.SendMessage(Any.Pack(joinedGame));
+        this.SendMessage(Any.Pack(Game.Board.GetBoardState()));
     }
 
     private void SendMessage(Any message)

@@ -1,3 +1,4 @@
+using Google.Protobuf;
 using Google.Protobuf.WellKnownTypes;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -31,10 +32,19 @@ public class ServerTests
     [TestMethod]
     public void Server_ClientLookingForGame()
     {
-        Server server = new Server(8080, 1);
+        Server server = new Server(8080, 2);
         Client client = TestObjects.BuildClient(server);
         client.ClientSendToServer(Any.Pack(client.BuildLookingForGame()));
+
         Assert.IsTrue(client.MessageLog.First.Value.Is(Schema.LookingForGame.Descriptor));
-        Assert.IsTrue(client.MessageLog.Last.Value.Is(Schema.JoinedGame.Descriptor));
+
+        Schema.JoinedGame joinedGameResponse = client.MessageLog.First.Next.Value.Unpack<Schema.JoinedGame>();
+        Assert.AreEqual(client.Id, joinedGameResponse.Username);
+
+        Assert.IsTrue(client.MessageLog.Last.Value.Is(Schema.BoardState.Descriptor));
+        Schema.BoardState boardState = client.MessageLog.Last.Value.Unpack<Schema.BoardState>();
+        byte[] bytes = boardState.ToByteArray();
+        int totalHexagonCount = boardState.PlayerHexagons[0].Hexagons.Count + boardState.PlayerHexagons[1].Hexagons.Count;
+        Assert.AreEqual(Constants.RowsPerPlayer * Constants.HexagonsPerRow * 2, totalHexagonCount);
     }
 }

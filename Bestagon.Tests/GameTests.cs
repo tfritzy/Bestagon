@@ -22,25 +22,21 @@ public class GameTests
 
         HashSet<Vector2> positions = new HashSet<Vector2>();
         HashSet<int> ids = new HashSet<int>();
-        Dictionary<int, int> playerHexCounts = new Dictionary<int, int>();
-        foreach (Hexagon hexagon in game.Board.Hexagons.Values)
+        foreach (int playerId in game.Board.Hexagons.Keys)
         {
-            Assert.IsFalse(positions.Contains(hexagon.Position));
-            positions.Add(hexagon.Position);
-
-            Assert.IsFalse(ids.Contains(hexagon.Id));
-            ids.Add(hexagon.Id);
-
-            if (playerHexCounts.ContainsKey(hexagon.Player) == false)
+            foreach (Hexagon hexagon in game.Board.Hexagons[playerId].Values)
             {
-                playerHexCounts[hexagon.Player] = 0;
+                Assert.IsFalse(positions.Contains(hexagon.Position));
+                positions.Add(hexagon.Position);
+
+                Assert.IsFalse(ids.Contains(hexagon.Id));
+                ids.Add(hexagon.Id);
             }
-            playerHexCounts[hexagon.Player] += 1;
         }
 
-        Assert.IsTrue(playerHexCounts[0] > 0);
-        Assert.AreEqual(2, playerHexCounts.Count);
-        Assert.AreEqual(playerHexCounts[0], playerHexCounts[1]);
+        Assert.AreEqual(2, game.Board.Hexagons.Count);
+        Assert.IsTrue(game.Board.Hexagons[0].Count > 0);
+        Assert.AreEqual(game.Board.Hexagons[0].Count, game.Board.Hexagons[1].Count);
     }
 
     [TestMethod]
@@ -50,12 +46,14 @@ public class GameTests
         Schema.BoardState boardState = game.Board.GetBoardState();
 
         HashSet<Hexagon> uniqueHexagons = new HashSet<Hexagon>();
-        foreach (Schema.Hexagon hexagon in boardState.Hexagons)
+        foreach (Schema.HexagonSet hexSet in boardState.PlayerHexagons)
         {
-            Assert.AreEqual(game.Board.Hexagons[hexagon.Id].Id, hexagon.Id);
-            Assert.AreEqual(game.Board.Hexagons[hexagon.Id].Player, hexagon.Player);
-            Assert.AreEqual(game.Board.Hexagons[hexagon.Id].Position.X, hexagon.Position.X);
-            Assert.AreEqual(game.Board.Hexagons[hexagon.Id].Position.Y, hexagon.Position.Y);
+            foreach (Schema.Hexagon hexagon in hexSet.Hexagons)
+            {
+                Assert.AreEqual(game.Board.Hexagons[hexSet.PlayerId][hexagon.Id].Id, hexagon.Id);
+                Assert.AreEqual(game.Board.Hexagons[hexSet.PlayerId][hexagon.Id].Position.X, hexagon.Position.X);
+                Assert.AreEqual(game.Board.Hexagons[hexSet.PlayerId][hexagon.Id].Position.Y, hexagon.Position.Y);
+            }
         }
     }
 }
