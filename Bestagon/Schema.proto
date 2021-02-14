@@ -25,6 +25,7 @@ message Hexagon
 {
     int32 Id = 1;
     Vector2 Position = 2;
+    bool IsDestroyed = 3;
 }
 
 message Vector2

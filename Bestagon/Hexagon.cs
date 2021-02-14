@@ -35,6 +35,7 @@ public class Hexagon
         return new Schema.Hexagon
         {
             Id = this.Id,
+            IsDestroyed = this.IsDestroyed,
             Position = new Schema.Vector2
             {
                 X = this.Position.X,

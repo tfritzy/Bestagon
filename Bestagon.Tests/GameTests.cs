@@ -27,9 +27,9 @@ public class GameTests
             positions.Add(hexagon.Position);
 
             Assert.IsFalse(ids.Contains(hexagon.Id));
+            Assert.IsFalse(hexagon.IsDestroyed);
             ids.Add(hexagon.Id);
         }
-
 
         Assert.AreEqual(Constants.RowsPerPlayer * Constants.HexagonsPerRow * 2, game.Board.Hexagons.Count);
     }
@@ -50,6 +50,7 @@ public class GameTests
                 Assert.AreEqual(game.Board.Hexagons[hexagon.Id].Position.X, hexagon.Position.X);
                 Assert.AreEqual(game.Board.Hexagons[hexagon.Id].Position.Y, hexagon.Position.Y);
                 Assert.AreEqual(game.Board.Hexagons[hexagon.Id].PlayerId, hexSet.PlayerId);
+                Assert.AreEqual(game.Board.Hexagons[hexagon.Id].IsDestroyed, hexagon.IsDestroyed);
             }
         }
 
@@ -72,6 +73,7 @@ public class GameTests
         Assert.AreEqual(2, boardState.HexagonSets.Count);
         Assert.AreEqual(1, boardState.HexagonSets[0].Hexagons.Count);
         Assert.AreEqual(0, boardState.HexagonSets[0].Hexagons[0].Id);
+        Assert.IsTrue(boardState.HexagonSets[0].Hexagons[0].IsDestroyed);
         Assert.AreEqual(0, boardState.HexagonSets[1].Hexagons.Count);
 
         game.Board.DestroyHexagon(0);
