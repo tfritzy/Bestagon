@@ -4,50 +4,69 @@ public class Board
 {
     /// <summary>
     /// All the hexagons present on the board.
-    /// Key is playerId. value is dictionary of hexagonId to hexagon.
+    /// Key is hexagonId value is hexagon.
     /// </summary>
-    public Dictionary<int, Dictionary<int, Hexagon>> Hexagons;
+    public Dictionary<int, Hexagon> Hexagons;
+
+    private List<int> unsentChanges;
 
     public Board()
     {
         SetupHexagons();
     }
 
+    public void DestroyHexagon(int id)
+    {
+        if (Hexagons.ContainsKey(id))
+        {
+            if (Hexagons[id].IsDestroyed == false)
+            {
+                Hexagons[id].Destroy();
+                unsentChanges.Add(id);
+            }
+
+            return;
+        }
+
+        throw new System.ArgumentException($"Hexagon with id {id} does not exist");
+    }
+
     public Schema.BoardState GetBoardState()
     {
         Schema.BoardState boardState = new Schema.BoardState();
 
-        foreach (int player in Hexagons.Keys)
+        for (int i = 0; i < Game.MaxPlayers; i++)
         {
-            Schema.HexagonSet hexagonSet = new Schema.HexagonSet
-            {
-                PlayerId = player,
-            };
-
-            foreach (Hexagon hexagon in Hexagons[player].Values)
-            {
-                hexagonSet.Hexagons.Add(hexagon.ToContract());
-            }
-            boardState.HexagonSets.Add(hexagonSet);
+            boardState.HexagonSets.Add(new Schema.HexagonSet { PlayerId = i });
         }
+
+        foreach (int hexagonId in unsentChanges)
+        {
+            boardState.HexagonSets[Hexagons[hexagonId].PlayerId].Hexagons.Add(Hexagons[hexagonId].ToContract());
+        }
+
+        unsentChanges = new List<int>();
 
         return boardState;
     }
 
     private void SetupHexagons()
     {
-        Hexagons = new Dictionary<int, Dictionary<int, Hexagon>>();
+        Hexagons = new Dictionary<int, Hexagon>();
+        unsentChanges = new List<int>();
+
         int currentHexagonId = 0;
 
-        Hexagons[0] = new Dictionary<int, Hexagon>();
-        Hexagons[1] = new Dictionary<int, Hexagon>();
+        Hexagons = new Dictionary<int, Hexagon>();
 
         // player 0
         for (int y = 0; y < Constants.RowsPerPlayer; y++)
         {
             for (int x = 0; x < Constants.HexagonsPerRow; x++)
             {
-                Hexagons[0].Add(currentHexagonId, new Hexagon(GetHexagonPosition(x, y), currentHexagonId));
+                Hexagon hexagon = new Hexagon(GetHexagonPosition(x, y), currentHexagonId, 0);
+                Hexagons.Add(currentHexagonId, hexagon);
+                unsentChanges.Add(hexagon.Id);
                 currentHexagonId += 1;
             }
         }
@@ -57,7 +76,9 @@ public class Board
         {
             for (int x = 0; x < Constants.HexagonsPerRow; x++)
             {
-                Hexagons[1].Add(currentHexagonId, new Hexagon(GetHexagonPosition(x, y), currentHexagonId));
+                Hexagon hexagon = new Hexagon(GetHexagonPosition(x, y), currentHexagonId, 1);
+                Hexagons.Add(currentHexagonId, hexagon);
+                unsentChanges.Add(hexagon.Id);
                 currentHexagonId += 1;
             }
         }
