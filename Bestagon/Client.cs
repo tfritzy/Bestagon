@@ -65,7 +65,7 @@ public class Client
         this.SendMessage(Any.Pack(Game.Board.GetBoardState()));
     }
 
-    private void SendMessage(Any message)
+    public void SendMessage(Any message)
     {
         this.TCPConnection.SendMessage(message);
         this.MessageLog.AddLast(message);

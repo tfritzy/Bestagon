@@ -11,4 +11,5 @@ public static class Constants
     public const float HorizontalDistanceBetweenHexagons = HEXAGON_R + HEXAGON_r / 2;
     public const float VerticalDistanceBetweenHexagons = HEXAGON_r * 2;
     public const int MS_Between_Updates = 1000;
+    public static readonly float[] WallPositions = new float[] { 10.22f, 6.94f, -11.99f, -6.27f }; // In order Top, right, bottom, left
 }

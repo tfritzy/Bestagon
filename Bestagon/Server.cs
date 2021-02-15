@@ -58,14 +58,24 @@ public class Server
     {
         while (true)
         {
-            try
+            UpdateIteration();
+        }
+    }
+
+    public void UpdateIteration(DateTime time = default)
+    {
+        try
+        {
+            foreach (Client client in clients)
             {
-                foreach (Client client in clients)
-                {
-                    client.DrainMessageQueue();
-                }
+                client.DrainMessageQueue();
             }
-            catch (InvalidOperationException) { }
+        }
+        catch (InvalidOperationException) { }
+
+        foreach (Game g in RunningGames)
+        {
+            g.Update(time == default ? DateTime.Now : time);
         }
     }
 

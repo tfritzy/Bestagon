@@ -28,6 +28,28 @@ message Hexagon
     bool IsDestroyed = 3;
 }
 
+message ProjectileCreated
+{
+    int32 Id = 1;
+    int32 Type = 2;
+    Vector2 Position = 3;
+    Vector2 Velocity = 4;
+    float Mass = 5;
+    float Radius = 6;
+}
+
+message ProjectileDestroyed
+{
+    int32 Id = 1;
+}
+
+message ProjectileUpdate
+{
+    int32 Id = 1;
+    Vector2 Position = 2;
+    Vector2 Velocity = 4;
+}
+
 message Vector2
 {
     float X = 1;

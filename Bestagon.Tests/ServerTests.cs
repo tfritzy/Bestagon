@@ -1,3 +1,4 @@
+using System;
 using Google.Protobuf;
 using Google.Protobuf.WellKnownTypes;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -50,5 +51,27 @@ public class ServerTests
         Assert.IsTrue(bytes.Length < Constants.DEFAULT_BUFFER_SIZE);
         int totalHexagonCount = boardState.HexagonSets[0].Hexagons.Count + boardState.HexagonSets[1].Hexagons.Count;
         Assert.AreEqual(Constants.RowsPerPlayer * Constants.HexagonsPerRow * 2, totalHexagonCount);
+    }
+
+    [TestMethod]
+    public void Server_UpdatesCalledOnGame()
+    {
+        Server server = new Server(8080);
+        Client p1 = TestObjects.BuildClient(server);
+        Client p2 = TestObjects.BuildClient(server);
+        Game game = new Game();
+        server.RunningGames.AddLast(game);
+        game.Players.Add(p1);
+        game.Players.Add(p2);
+
+        Vector2 projectilePosition = new Vector2(0, 0);
+        Vector2 velocity = new Vector2(2, 3);
+        game.Board.CreateProjectile(0, projectilePosition, velocity);
+
+        server.UpdateIteration(game.LastUpdateTime);
+        Assert.AreEqual(projectilePosition, game.Board.Projectiles[0].Position);
+
+        server.UpdateIteration(game.LastUpdateTime.AddMilliseconds(500));
+        Assert.AreEqual(projectilePosition + velocity / 2, game.Board.Projectiles[0].Position);
     }
 }

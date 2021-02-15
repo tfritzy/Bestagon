@@ -7,12 +7,28 @@ public class Board
     /// Key is hexagonId value is hexagon.
     /// </summary>
     public Dictionary<int, Hexagon> Hexagons;
+    public List<Projectile> Projectiles;
+    public LinkedList<Projectile> NewProjectiles;
 
     private List<int> unsentChanges;
+    private int projectileIdGenerator;
 
     public Board()
     {
+        this.Projectiles = new List<Projectile>();
+        this.NewProjectiles = new LinkedList<Projectile>();
+
         SetupHexagons();
+    }
+
+    public bool AnyHexagonChanges => unsentChanges.Count > 0;
+
+    public void CreateProjectile(int playerId, Vector2 position, Vector2 velocity)
+    {
+        Projectile projectile = new BouncingBall(projectileIdGenerator, position, velocity);
+        projectileIdGenerator += 1;
+        this.Projectiles.Add(projectile);
+        NewProjectiles.AddLast(projectile);
     }
 
     public void DestroyHexagon(int id)

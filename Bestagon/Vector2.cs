@@ -30,8 +30,32 @@ public class Vector2
         return (int)(X * 196613 + Y * 393241);
     }
 
+    public static Vector2 operator +(Vector2 a, Vector2 b)
+    {
+        return new Vector2(a.X + b.X, a.Y + b.Y);
+    }
+
+    public static Vector2 operator *(Vector2 a, float b)
+    {
+        return new Vector2(a.X * b, a.Y * b);
+    }
+
+    public static Vector2 operator /(Vector2 a, float b)
+    {
+        return new Vector2(a.X / b, a.Y / b);
+    }
+
     public override string ToString()
     {
         return $"<{this.X}, {this.Y}>";
+    }
+
+    public Schema.Vector2 ToContract()
+    {
+        return new Schema.Vector2
+        {
+            X = this.X,
+            Y = this.Y,
+        };
     }
 }
