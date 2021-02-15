@@ -28,7 +28,7 @@ public class Game
     public void Update(DateTime currentTime)
     {
         float deltaTime = (float)(currentTime - LastUpdateTime).TotalMilliseconds / 1000f;
-
+        LastUpdateTime = DateTime.Now;
         foreach (Projectile projectile in Board.Projectiles)
         {
             projectile.Position += projectile.Velocity * deltaTime;
@@ -52,5 +52,12 @@ public class Game
         {
             player.SendMessage(message);
         }
+    }
+
+    public void AddClient(Client client)
+    {
+        client.PlayerId = Players.Count;
+        Players.Add(client);
+        client.Game = this;
     }
 }

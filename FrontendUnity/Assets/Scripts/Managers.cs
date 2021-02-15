@@ -15,4 +15,32 @@ public static class Managers
             return _board;
         }
     }
+
+    private static Client client;
+    public static Client Client
+    {
+        get
+        {
+            if (client == null)
+            {
+                client = GameObject.Find("Client").GetComponent<Client>();
+            }
+
+            return client;
+        }
+    }
+
+    private static Player player;
+    public static Player Player
+    {
+        get
+        {
+            if (player == null)
+            {
+                player = GameObject.Find("Player").GetComponent<Player>();
+            }
+
+            return player;
+        }
+    }
 }

@@ -13,7 +13,7 @@ public class ClientTests
         Server server = new Server(8080);
         string id = Guid.NewGuid().ToString("N");
         Client client = new Client(id, server);
-        Assert.AreEqual(id, client.Id);
+        Assert.AreEqual(id, client.Username);
         Assert.AreEqual(server, client.Server);
     }
 
@@ -89,5 +89,8 @@ public class ClientTests
         CollectionAssert.Contains(server.RunningGames.First.Value.Players, client2);
         CollectionAssert.DoesNotContain(server.RunningGames.First.Value.Players, client3);
         CollectionAssert.Contains(server.OpenGames.First.Value.Players, client3);
+        Assert.AreEqual(0, client1.PlayerId);
+        Assert.AreEqual(1, client2.PlayerId);
+        Assert.AreEqual(0, client3.PlayerId);
     }
 }

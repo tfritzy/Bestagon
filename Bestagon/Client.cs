@@ -7,14 +7,15 @@ using Google.Protobuf.WellKnownTypes;
 public class Client
 {
     public TCPConnection TCPConnection;
-    public string Id;
+    public string Username;
     public Server Server;
     public Game Game;
     public LinkedList<Any> MessageLog;
+    public int PlayerId;
 
     public Client(string clientId, Server server)
     {
-        this.Id = clientId;
+        this.Username = clientId;
         this.TCPConnection = new TCPConnection();
         this.Server = server;
         this.MessageLog = new LinkedList<Any>();
@@ -47,6 +48,15 @@ public class Client
         {
             AskForGame(any.Unpack<Schema.LookingForGame>());
         }
+        else if (any.Is(Schema.ProjectileCreated.Descriptor))
+        {
+            // TODO: Remove
+            if (Game == null)
+            {
+                return;
+            }
+            CreateProjectile(any.Unpack<Schema.ProjectileCreated>());
+        }
     }
 
     private void AskForGame(Schema.LookingForGame playerLookingForGame)
@@ -55,7 +65,7 @@ public class Client
 
         Schema.JoinedGame joinedGame = new Schema.JoinedGame
         {
-            Username = this.Id,
+            Username = this.Username,
         };
 
         Console.WriteLine("Telling player they got a game");
@@ -63,6 +73,11 @@ public class Client
 
         Console.WriteLine("Telling player initial board state");
         this.SendMessage(Any.Pack(Game.Board.GetBoardState()));
+    }
+
+    private void CreateProjectile(Schema.ProjectileCreated projectileCreated)
+    {
+        this.Game.Board.CreateProjectile(this.PlayerId, projectileCreated.Position.ToInternal(), projectileCreated.Velocity.ToInternal(), projectileCreated.Type);
     }
 
     public void SendMessage(Any message)

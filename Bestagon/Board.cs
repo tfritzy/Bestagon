@@ -23,7 +23,7 @@ public class Board
 
     public bool AnyHexagonChanges => unsentChanges.Count > 0;
 
-    public void CreateProjectile(int playerId, Vector2 position, Vector2 velocity)
+    public void CreateProjectile(int playerId, Vector2 position, Vector2 velocity, int projectileType)
     {
         Projectile projectile = new BouncingBall(projectileIdGenerator, position, velocity);
         projectileIdGenerator += 1;

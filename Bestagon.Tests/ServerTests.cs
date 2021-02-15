@@ -43,7 +43,7 @@ public class ServerTests
         Assert.IsTrue(client.MessageLog.First.Value.Is(Schema.LookingForGame.Descriptor));
 
         Schema.JoinedGame joinedGameResponse = client.MessageLog.First.Next.Value.Unpack<Schema.JoinedGame>();
-        Assert.AreEqual(client.Id, joinedGameResponse.Username);
+        Assert.AreEqual(client.Username, joinedGameResponse.Username);
 
         Assert.IsTrue(client.MessageLog.Last.Value.Is(Schema.BoardState.Descriptor));
         Schema.BoardState boardState = client.MessageLog.Last.Value.Unpack<Schema.BoardState>();
@@ -66,7 +66,7 @@ public class ServerTests
 
         Vector2 projectilePosition = new Vector2(0, 0);
         Vector2 velocity = new Vector2(2, 3);
-        game.Board.CreateProjectile(0, projectilePosition, velocity);
+        game.Board.CreateProjectile(0, projectilePosition, velocity, (int)ProjectileType.BouncingBall);
 
         server.UpdateIteration(game.LastUpdateTime);
         Assert.AreEqual(projectilePosition, game.Board.Projectiles[0].Position);

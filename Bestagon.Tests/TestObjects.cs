@@ -20,7 +20,27 @@ public static class TestObjects
     {
         return new Schema.LookingForGame()
         {
-            Username = client.Id,
+            Username = client.Username,
+        };
+    }
+
+    public static Game BuildFullRunningGame()
+    {
+        Game game = new Game();
+        Client client1 = TestObjects.BuildClient();
+        Client client2 = TestObjects.BuildClient();
+        game.AddClient(client1);
+        game.AddClient(client2);
+        return game;
+    }
+
+    public static Schema.ProjectileCreated BuildPlayerCreatesProjectile(Vector2 position, Vector2 velocity, ProjectileType type)
+    {
+        return new Schema.ProjectileCreated
+        {
+            Position = position.ToContract(),
+            Type = (int)type,
+            Velocity = velocity.ToContract()
         };
     }
 }

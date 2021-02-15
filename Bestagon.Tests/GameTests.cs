@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Google.Protobuf.WellKnownTypes;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 [TestClass]
@@ -39,26 +40,33 @@ public class GameTests
     public void Game_InitialBoardStateMessage()
     {
         Game game = new Game();
+        Client client1 = TestObjects.BuildClient();
+        Client client2 = TestObjects.BuildClient();
+        game.AddClient(client1);
+        game.AddClient(client2);
+        game.Update(game.LastUpdateTime);
 
-        Schema.BoardState boardState = game.Board.GetBoardState();
-
-        HashSet<Hexagon> uniqueHexagons = new HashSet<Hexagon>();
-        foreach (Schema.HexagonSet hexSet in boardState.HexagonSets)
+        foreach (Client player in game.Players)
         {
-            foreach (Schema.Hexagon hexagon in hexSet.Hexagons)
+            Schema.BoardState boardState = player.MessageLog.First.Value.Unpack<Schema.BoardState>();
+            HashSet<Hexagon> uniqueHexagons = new HashSet<Hexagon>();
+            foreach (Schema.HexagonSet hexSet in boardState.HexagonSets)
             {
-                Assert.AreEqual(game.Board.Hexagons[hexagon.Id].Id, hexagon.Id);
-                Assert.AreEqual(game.Board.Hexagons[hexagon.Id].Position.X, hexagon.Position.X);
-                Assert.AreEqual(game.Board.Hexagons[hexagon.Id].Position.Y, hexagon.Position.Y);
-                Assert.AreEqual(game.Board.Hexagons[hexagon.Id].PlayerId, hexSet.PlayerId);
-                Assert.AreEqual(game.Board.Hexagons[hexagon.Id].IsDestroyed, hexagon.IsDestroyed);
+                foreach (Schema.Hexagon hexagon in hexSet.Hexagons)
+                {
+                    Assert.AreEqual(game.Board.Hexagons[hexagon.Id].Id, hexagon.Id);
+                    Assert.AreEqual(game.Board.Hexagons[hexagon.Id].Position.X, hexagon.Position.X);
+                    Assert.AreEqual(game.Board.Hexagons[hexagon.Id].Position.Y, hexagon.Position.Y);
+                    Assert.AreEqual(game.Board.Hexagons[hexagon.Id].PlayerId, hexSet.PlayerId);
+                    Assert.AreEqual(game.Board.Hexagons[hexagon.Id].IsDestroyed, hexagon.IsDestroyed);
+                }
             }
         }
 
-        boardState = game.Board.GetBoardState();
-        Assert.AreEqual(2, boardState.HexagonSets.Count);
-        Assert.AreEqual(0, boardState.HexagonSets[0].Hexagons.Count);
-        Assert.AreEqual(0, boardState.HexagonSets[1].Hexagons.Count);
+        Schema.BoardState emptyBoardState = game.Board.GetBoardState();
+        Assert.AreEqual(2, emptyBoardState.HexagonSets.Count);
+        Assert.AreEqual(0, emptyBoardState.HexagonSets[0].Hexagons.Count);
+        Assert.AreEqual(0, emptyBoardState.HexagonSets[1].Hexagons.Count);
     }
 
     [TestMethod]
@@ -100,7 +108,7 @@ public class GameTests
         Vector2 position = new Vector2(1, 2);
         Vector2 velocity = new Vector2(-1, -1);
 
-        game.Board.CreateProjectile(0, position, velocity);
+        game.Board.CreateProjectile(0, position, velocity, (int)ProjectileType.BouncingBall);
         game.Update(game.LastUpdateTime);
         Assert.IsTrue(game.Players[0].MessageLog.First.Value.Is(Schema.ProjectileCreated.Descriptor));
         Schema.ProjectileCreated createdMessage = game.Players[0].MessageLog.First.Value.Unpack<Schema.ProjectileCreated>();
@@ -115,7 +123,7 @@ public class GameTests
         Assert.AreEqual(projectile.Mass, createdMessage.Mass);
         Assert.AreEqual(projectile.Radius, createdMessage.Radius);
         Assert.AreEqual(0, createdMessage.Id);
-        game.Board.CreateProjectile(0, new Vector2(1, 1), new Vector2(4, 5));
+        game.Board.CreateProjectile(0, new Vector2(1, 1), new Vector2(4, 5), (int)ProjectileType.BouncingBall);
         Assert.AreEqual(1, game.Board.Projectiles.Last().Id);
 
         game.Update(game.LastUpdateTime.AddSeconds(1));
@@ -123,6 +131,23 @@ public class GameTests
 
         game.Update(game.LastUpdateTime.AddSeconds(1));
         Assert.AreEqual(position + velocity * 2, projectile.Position);
+    }
+
+    [TestMethod]
+    public void Game_PlayerRequestsProjectile()
+    {
+        Game game = TestObjects.BuildFullRunningGame();
+        Schema.ProjectileCreated projCreated = TestObjects.BuildPlayerCreatesProjectile(new Vector2(5, 6), new Vector2(1, 1), ProjectileType.BouncingBall);
+        game.Players[0].ClientSendToServer(Any.Pack(projCreated));
+        game.Update(game.LastUpdateTime);
+        Schema.ProjectileCreated sentProjCreatedMessage = game.Players[0].MessageLog.First.Next.Value.Unpack<Schema.ProjectileCreated>();
+        BouncingBall dummyBouncingBall = new BouncingBall(-1, new Vector2(), new Vector2());
+
+        Assert.AreEqual(projCreated.Position, sentProjCreatedMessage.Position);
+        Assert.AreEqual(projCreated.Velocity, sentProjCreatedMessage.Velocity);
+        Assert.AreEqual(projCreated.Type, sentProjCreatedMessage.Type);
+        Assert.AreEqual(dummyBouncingBall.Mass, sentProjCreatedMessage.Mass);
+        Assert.AreEqual(dummyBouncingBall.Radius, sentProjCreatedMessage.Radius);
     }
 
     private void CompareVectors(Vector2 vector, Schema.Vector2 contractVector)

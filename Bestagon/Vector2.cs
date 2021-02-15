@@ -9,6 +9,12 @@ public class Vector2
         this.Y = y;
     }
 
+    public Vector2()
+    {
+        this.X = 0;
+        this.Y = 0;
+    }
+
     public override bool Equals(object obj)
     {
         if (this == null || obj == null)

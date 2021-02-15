@@ -18,6 +18,7 @@ public class Server
         this.Port = port;
         this.OpenGames = new LinkedList<Game>();
         this.RunningGames = new LinkedList<Game>();
+        this.lastUpdateTime = DateTime.Now;
     }
 
     public int Port { get; }
@@ -54,11 +55,34 @@ public class Server
         return true;
     }
 
+    LinkedList<double> timeBetweenUpdates = new LinkedList<double>();
+    DateTime lastUpdateTime;
+    private double averageTimeBetweenUpdates;
+    private int printFPSCounter = 0;
     public void Update()
     {
         while (true)
         {
             UpdateIteration();
+            double delta = (DateTime.Now - lastUpdateTime).TotalMilliseconds;
+            timeBetweenUpdates.AddLast(delta);
+            averageTimeBetweenUpdates += delta;
+            lastUpdateTime = DateTime.Now;
+
+            if (printFPSCounter > 10000000)
+            {
+                Console.WriteLine($"Server running at {1000f / (averageTimeBetweenUpdates / 1000)} FPS");
+                printFPSCounter = 0;
+            }
+
+            if (timeBetweenUpdates.Count > 1000)
+            {
+                averageTimeBetweenUpdates -= timeBetweenUpdates.First.Value;
+                timeBetweenUpdates.RemoveFirst();
+            }
+
+
+            printFPSCounter += 1;
         }
     }
 
@@ -77,6 +101,12 @@ public class Server
         {
             g.Update(time == default ? DateTime.Now : time);
         }
+
+        // TODO: For testing purposes so I don't have to create a second client. Remove later.
+        foreach (Game g in OpenGames)
+        {
+            g.Update(time == default ? DateTime.Now : time);
+        }
     }
 
     public Game FindGame(Client client)
@@ -88,7 +118,7 @@ public class Server
 
         if (OpenGames.Count > 0)
         {
-            OpenGames.First.Value.Players.Add(client);
+            OpenGames.First.Value.AddClient(client);
             if (OpenGames.First.Value.IsFull())
             {
                 Game game = OpenGames.First.Value;
@@ -103,7 +133,7 @@ public class Server
         {
             Game game = new Game();
             OpenGames.AddLast(game);
-            game.Players.Add(client);
+            game.AddClient(client);
             return OpenGames.Last.Value;
         }
     }

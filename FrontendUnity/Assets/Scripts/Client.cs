@@ -18,7 +18,7 @@ public class Client : MonoBehaviour
 
     private void Update()
     {
-        while(TCPConnection.MessageQueue.Count > 0)
+        while (TCPConnection.MessageQueue.Count > 0)
         {
             HandleData(TCPConnection.MessageQueue.First.Value);
             TCPConnection.MessageQueue.RemoveFirst();
@@ -46,6 +46,10 @@ public class Client : MonoBehaviour
         {
             Managers.Board.HandleBoardStateChange(any.Unpack<Schema.BoardState>());
         }
+        else if (any.Is(Schema.ProjectileCreated.Descriptor))
+        {
+            Managers.Player.InstantiateProjectile(any.Unpack<Schema.ProjectileCreated>());
+        }
     }
 
     public void AskForGame()
@@ -57,5 +61,10 @@ public class Client : MonoBehaviour
         };
 
         TCPConnection.SendMessage(Any.Pack(lookingForGame)).Wait();
+    }
+
+    public void SendMessage(Any any)
+    {
+        TCPConnection.SendMessage(any).Wait();
     }
 }
