@@ -1,3 +1,5 @@
+using System;
+
 public class Vector2
 {
     public float X;
@@ -13,6 +15,11 @@ public class Vector2
     {
         this.X = 0;
         this.Y = 0;
+    }
+
+    public float Magnitude
+    {
+        get { return MathF.Sqrt(MathF.Pow(X, 2) + MathF.Pow(Y, 2)); }
     }
 
     public override bool Equals(object obj)
@@ -41,6 +48,11 @@ public class Vector2
         return new Vector2(a.X + b.X, a.Y + b.Y);
     }
 
+    public static Vector2 operator -(Vector2 a, Vector2 b)
+    {
+        return new Vector2(a.X - b.X, a.Y - b.Y);
+    }
+
     public static Vector2 operator *(Vector2 a, float b)
     {
         return new Vector2(a.X * b, a.Y * b);
@@ -56,6 +68,11 @@ public class Vector2
         return $"<{this.X}, {this.Y}>";
     }
 
+    public float Dot(Vector2 other)
+    {
+        return other.X * this.X + other.Y * this.Y;
+    }
+
     public Schema.Vector2 ToContract()
     {
         return new Schema.Vector2
@@ -63,5 +80,25 @@ public class Vector2
             X = this.X,
             Y = this.Y,
         };
+    }
+
+    public Vector2 Normalized
+    {
+        get { return this / MathF.Sqrt(X * X + Y * Y); }
+    }
+
+    public Vector2 PerpendicularClockwise
+    {
+        get { return new Vector2(Y, -X); }
+    }
+
+    public Vector2 PerpendicularCounterClockwise
+    {
+        get { return new Vector2(-Y, X); }
+    }
+
+    public static Vector2 MinValue
+    {
+        get { return new Vector2(float.MinValue, float.MinValue); }
     }
 }

@@ -1,3 +1,5 @@
+using System;
+
 public static class Extensions
 {
     public static Vector2 ToInternal(this Schema.Vector2 vector2)
